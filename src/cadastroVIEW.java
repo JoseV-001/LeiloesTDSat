@@ -1,7 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
+import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -9,11 +8,14 @@
  */
 public class cadastroVIEW extends javax.swing.JFrame {
 
+    private listagemVIEW listaView;
+
     /**
      * Creates new form cadastroVIEW
      */
-    public cadastroVIEW() {
+    public cadastroVIEW(listagemVIEW listaView) {
         initComponents();
+        this.listaView = listaView;
     }
 
     /**
@@ -135,27 +137,50 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cadastroNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastroNomeActionPerformed
-        
-        
+
+
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+          try {
+        // Cria uma nova instância de ProdutosDTO e define os valores
         ProdutosDTO produto = new ProdutosDTO();
         String nome = cadastroNome.getText();
         String valor = cadastroValor.getText();
         String status = "A Venda";
+        
         produto.setNome(nome);
         produto.setValor(Integer.parseInt(valor));
         produto.setStatus(status);
-        
+
+        // Cria uma instância de ProdutosDAO e realiza o cadastro
         ProdutosDAO produtodao = new ProdutosDAO();
         produtodao.cadastrarProduto(produto);
+
+        // Exibe uma mensagem de sucesso
+        JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!", "Cadastro de Produto", JOptionPane.INFORMATION_MESSAGE);
+
+        // Atualiza a tabela na listagemVIEW se a instância estiver disponível
+        if (listaView != null) {
+            listaView.listarProdutos(); // Atualiza a tabela na listagemVIEW
+        }
         
+    } catch (NumberFormatException e) {
+        // Exibe uma mensagem de erro se o valor não for um número válido
+        JOptionPane.showMessageDialog(this, "Valor do produto inválido. Por favor, insira um número.", "Erro", JOptionPane.ERROR_MESSAGE);
+    } catch (Exception e) {
+        // Exibe uma mensagem de erro para outros problemas
+        JOptionPane.showMessageDialog(this, "Erro ao cadastrar produto: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
-        listagemVIEW listagem = new listagemVIEW(); 
-        listagem.setVisible(true);
+        if (listaView != null) {
+            listaView.setVisible(true);
+        } else {
+            listaView = new listagemVIEW();
+            listaView.setVisible(true);
+        }
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     /**
@@ -188,7 +213,9 @@ public class cadastroVIEW extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new cadastroVIEW().setVisible(true);
+                listagemVIEW listaView = new listagemVIEW();
+                cadastroVIEW cadastro = new cadastroVIEW(listaView);
+                cadastro.setVisible(true);
             }
         });
     }
